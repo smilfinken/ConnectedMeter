@@ -112,6 +112,8 @@ void initMeter() {
     pinMode(DATA_ACTIVATE, OUTPUT);
 
     SERIAL_DEBUG.println(" done");
+
+    requestData(false);
   } else {
     SERIAL_DEBUG.println(" failed");
   }
@@ -147,16 +149,20 @@ String fetchData() {
     SERIAL_DEBUG.println("serial communication is not initialized");
   }
 
-  SERIAL_DEBUG.println("requesting data.. ");
   requestData(true);
+
+  SERIAL_DEBUG.print("waiting for data..");
   int count = 0;
   while (!SERIAL_INPUT.available()) {
+    SERIAL_DEBUG.print(".");
     if (count++ > 100) {
-      SERIAL_DEBUG.print(" no energy data available over serial communication");
+      SERIAL_DEBUG.println(" no energy data available over serial communication");
+      requestData(false);
       return "";
     }
     delay(10);
   }
+  SERIAL_DEBUG.println(" data available");
 
   SERIAL_DEBUG.println("receiving data.. ");
   while (SERIAL_INPUT.available()) {
@@ -169,6 +175,7 @@ String fetchData() {
   SERIAL_DEBUG.print(result.length());
   SERIAL_DEBUG.println(" characters");
 
+  requestData(false);
   return result;
 }
 
@@ -219,6 +226,14 @@ void setup()
 
 void loop()
 {
+  if (SERIAL_INPUT.available()) {
+    SERIAL_DEBUG.println("receiving spam:");
+    while (SERIAL_INPUT.available()) {
+      SERIAL_DEBUG.print((char)SERIAL_INPUT.read());
+    }
+    SERIAL_DEBUG.println();
+  }
+
   long now = millis();
  
   if (now - ntpCheck >= ntpInterval) {
@@ -228,6 +243,6 @@ void loop()
   if (now - dataCheck >= dataInterval) {
     submitData(fetchData());
   }
-  
+
   delay(loopResolution);
 }
