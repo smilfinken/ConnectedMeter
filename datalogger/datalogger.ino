@@ -15,7 +15,7 @@
 #define SERIAL_RATE 115200
 
 // maximum expected message length
-#define MAX_MESSAGE_LENGTH 1000
+#define MAX_MESSAGE_LENGTH 720
 
 // local configuration parameters should be defined in localconfig.h
 #if __has_include("localconfig.h")
@@ -122,7 +122,7 @@ void initMeter() {
 }
 
 void initTrackers() {
-  SERIAL_DEBUG.print("setting up..");
+  SERIAL_DEBUG.print("setting up interval trackers..");
 
   long now = millis();
   SERIAL_DEBUG.print(".");
@@ -161,7 +161,7 @@ void readData() {
         messageData[messageIndex++] = data;
       }
   
-      if (endTagReceivedAt > 0 && messageIndex >= endTagReceivedAt + checksumLength) {
+      if (endTagReceivedAt > 0 && messageIndex > endTagReceivedAt + checksumLength) {
         messageData[messageIndex++] = '\0';
         SERIAL_DEBUG.println();
         SERIAL_DEBUG.print("message complete at ");
