@@ -45,10 +45,10 @@ const String dataProtocol = DATA_PROTOCOL;
 const String dataHost = DATA_HOST;
 const String dataPath = DATA_PATH;
 
-// can be tweaked for performance
+// can be tweaked for performance and/or reliability
 const int loopResolution = 100;
 const int ntpInterval = 60 * 60 * 1000;
-const int dataInterval = 5 * 1000;
+const int dataInterval = 60 * 1000;
 
 // keeping track of check intervals
 long ntpCheck = 0;
@@ -91,18 +91,26 @@ void initNTP() {
   SERIAL_DEBUG.println(" done");
 }
 
+void requestData(bool enable) {
+
+  if (enable) {
+    SERIAL_DEBUG.print("activating meter data output..");
+    digitalWrite(DATA_ACTIVATE, HIGH);
+  } else {
+    SERIAL_DEBUG.print("deactivating meter data output..");
+    digitalWrite(DATA_ACTIVATE, LOW);
+  }
+
+  SERIAL_DEBUG.println(" done");
+}
+
 void initMeter() {
   SERIAL_DEBUG.print("initializing serial communication..");
   
   SERIAL_INPUT.begin(SERIAL_RATE);
-  if (Serial) {
-    SERIAL_DEBUG.println(" done");
-  
-    SERIAL_DEBUG.print("activating meter data output..");
-  
+  if (SERIAL_INPUT) {
     pinMode(DATA_ACTIVATE, OUTPUT);
-    SERIAL_DEBUG.print(".");
-    digitalWrite(DATA_ACTIVATE, HIGH);
+
     SERIAL_DEBUG.println(" done");
   } else {
     SERIAL_DEBUG.println(" failed");
@@ -139,20 +147,27 @@ String fetchData() {
     SERIAL_DEBUG.println("serial communication is not initialized");
   }
 
-  if (SERIAL_INPUT.available() > 0) {
-    SERIAL_DEBUG.println("receiving data:");
-    while (SERIAL_INPUT.available()) {
-      char dataChar = char(SERIAL_INPUT.read());
-      SERIAL_DEBUG.print(dataChar);
-      result += dataChar;
+  SERIAL_DEBUG.println("requesting data.. ");
+  requestData(true);
+  int count = 0;
+  while (!SERIAL_INPUT.available()) {
+    if (count++ > 100) {
+      SERIAL_DEBUG.print(" no energy data available over serial communication");
+      return "";
     }
-    SERIAL_DEBUG.println();
-    SERIAL_DEBUG.print("received ");
-    SERIAL_DEBUG.print(result.length());
-    SERIAL_DEBUG.println(" characters");
-  } else {
-    SERIAL_DEBUG.println("no energy data available over serial communication");
+    delay(10);
   }
+
+  SERIAL_DEBUG.println("receiving data.. ");
+  while (SERIAL_INPUT.available()) {
+    char dataChar = char(SERIAL_INPUT.read());
+    SERIAL_DEBUG.print(dataChar);
+    result += dataChar;
+  }
+  SERIAL_DEBUG.println();
+  SERIAL_DEBUG.print("received ");
+  SERIAL_DEBUG.print(result.length());
+  SERIAL_DEBUG.println(" characters");
 
   return result;
 }
