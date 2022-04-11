@@ -8,5 +8,5 @@ spring:
 logging:
   level:
     root: INFO
-    net.smilfinken: DEBUG
-    net.smilfinken.meter.collector: TRACE
+    net.smilfinken: INFO
+    net.smilfinken.meter.collector: DEBUG

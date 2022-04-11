@@ -17,14 +17,17 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/meter/collector")
 class PostDataController {
     companion object {
-        val LOGGER = LoggerFactory.getLogger(PostDataController::class.java)!!
-        val DATAITEM_PATTERN = """\d+-\d+:\d+\.\d+\.\d+\(.+\)""".toRegex()
+        private val LOGGER = LoggerFactory.getLogger(PostDataController::class.java)!!
+        private val DATAITEM_PATTERN = """\d+-\d+:\d+\.\d+\.\d+\(.+\)""".toRegex()
+
+        private var successCount = 0
+        private var errorCount = 0
     }
 
     @PostMapping("/submit")
     fun submit(@RequestBody data: String): ResponseEntity<String> {
-        LOGGER.debug("submit()")
-        LOGGER.trace("received message:\n$data)")
+        LOGGER.trace("submit()")
+        LOGGER.trace("received message:\n$data")
 
         try {
             verifyData(data)
@@ -42,19 +45,25 @@ class PostDataController {
                 .map { DataItem(it) }
                 .forEach { dataReport.addItem(it) }
 
-            LOGGER.debug("id:        $id")
-            LOGGER.debug("timestamp: ${dataReport.getTimestamp()}")
-            LOGGER.debug("stored     ${dataReport.getCount()} data items")
+            val message = "" +
+                    "stored ${dataReport.getCount()} data items" +
+                    " for ID $id" +
+                    " recorded at ${dataReport.getTimestamp()}"
+            LOGGER.info(message)
+            LOGGER.debug("success: ${++successCount}, fail: $errorCount")
 
             return ResponseEntity.ok(id)
         } catch (throwable: CrcVerificationException) {
             LOGGER.error("Failed to verify data", throwable)
+            LOGGER.debug("success: $successCount, fail: ${++errorCount}")
             return ResponseEntity.internalServerError().body(throwable.localizedMessage)
         } catch (throwable: IllegalArgumentException) {
             LOGGER.error("Failed to parse timestamp", throwable)
+            LOGGER.debug("success: $successCount, fail: ${++errorCount}")
             return ResponseEntity.internalServerError().body(throwable.localizedMessage)
         } catch (throwable: Throwable) {
             LOGGER.error("Failed to store submitted data", throwable)
+            LOGGER.debug("success: $successCount, fail: ${++errorCount}")
             return ResponseEntity.internalServerError().body(throwable.localizedMessage)
         }
     }
