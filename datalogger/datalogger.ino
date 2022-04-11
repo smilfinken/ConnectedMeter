@@ -14,6 +14,9 @@
 // hard-coded baud rate for the Sagemcom meter
 #define SERIAL_RATE 115200
 
+// maximum expected message length
+#define MAX_MESSAGE_LENGTH 720
+
 // local configuration parameters should be defined in localconfig.h
 #if __has_include("localconfig.h")
 #include "localconfig.h"
@@ -46,17 +49,26 @@ const String dataHost = DATA_HOST;
 const String dataPath = DATA_PATH;
 
 // can be tweaked for performance
-const int loopResolution = 100;
+const int loopResolution = 10;
 const int ntpInterval = 60 * 60 * 1000;
-const int dataInterval = 5 * 1000;
 
 // keeping track of check intervals
 long ntpCheck = 0;
-long dataCheck = 0;
 
 ESP8266WiFiMulti wifiMulti;
 WiFiUDP wifiUDP;
 NTP ntp(wifiUDP);
+
+// hold the message data from the meter until it can be sumbitted
+char messageData[MAX_MESSAGE_LENGTH + 1];
+int messageIndex = 0;
+
+// track the message progress
+const char startTag = '/';
+const char endTag = '!';
+const int checksumLength = 4;
+int endTagReceivedAt = -1;
+bool messageSubmitted = false;
 
 void initDebug() {
   SERIAL_DEBUG.begin(115200);
@@ -110,13 +122,11 @@ void initMeter() {
 }
 
 void initTrackers() {
-  SERIAL_DEBUG.print("setting up..");
+  SERIAL_DEBUG.print("setting up interval trackers..");
 
   long now = millis();
   SERIAL_DEBUG.print(".");
   ntpCheck = now - ntpInterval;
-  SERIAL_DEBUG.print(".");
-  dataCheck = now - dataInterval;
   
   SERIAL_DEBUG.println(" done");
 }
@@ -125,39 +135,48 @@ void updateTime() {
   SERIAL_DEBUG.print("synching with NTP server..");
 
   ntpCheck = millis();
-
   ntp.update();
 
   SERIAL_DEBUG.println(ntp.formattedTime(" current time: %F %T"));
 }
 
-String fetchData() {
-  dataCheck = millis();
-  String result = "";
-
-  if (!Serial) {
-    SERIAL_DEBUG.println("serial communication is not initialized");
-  }
-
-  if (SERIAL_INPUT.available() > 0) {
-    SERIAL_DEBUG.println("receiving data:");
-    while (SERIAL_INPUT.available()) {
-      char dataChar = char(SERIAL_INPUT.read());
-      SERIAL_DEBUG.print(dataChar);
-      result += dataChar;
+void readData() {
+  while (SERIAL_INPUT.available()) {
+    char data = (char)SERIAL_INPUT.read();
+    if (data == startTag) {
+      SERIAL_DEBUG.println("start tag received");
+  
+      messageSubmitted = false;
+      endTagReceivedAt = -1;
+      messageIndex = 0;
+    } else if (data == endTag) {
+      SERIAL_DEBUG.println("end tag received");
+  
+      endTagReceivedAt = messageIndex;
     }
-    SERIAL_DEBUG.println();
-    SERIAL_DEBUG.print("received ");
-    SERIAL_DEBUG.print(result.length());
-    SERIAL_DEBUG.println(" characters");
-  } else {
-    SERIAL_DEBUG.println("no energy data available over serial communication");
+    SERIAL_DEBUG.print(data);
+  
+    if (!messageSubmitted) {
+      if (messageIndex < MAX_MESSAGE_LENGTH) {
+        messageData[messageIndex++] = data;
+      }
+  
+      if (endTagReceivedAt > 0 && messageIndex > endTagReceivedAt + checksumLength) {
+        messageData[messageIndex++] = '\0';
+        SERIAL_DEBUG.println();
+        SERIAL_DEBUG.print("message complete at ");
+        SERIAL_DEBUG.print(messageIndex);
+        SERIAL_DEBUG.println(" characters received");
+    
+        submitData();
+        messageSubmitted = true;
+      }
+    }
   }
-
-  return result;
 }
 
-void submitData(String data) {
+void submitData() {
+  String data(messageData);
   if (data.length() > 0) {
     SERIAL_DEBUG.print("submitting energy data..");
 
@@ -204,15 +223,11 @@ void setup()
 
 void loop()
 {
-  long now = millis();
- 
-  if (now - ntpCheck >= ntpInterval) {
+  if (messageSubmitted && millis() - ntpCheck >= ntpInterval) {
     updateTime();
   }
 
-  if (now - dataCheck >= dataInterval) {
-    submitData(fetchData());
-  }
+  readData();
   
   delay(loopResolution);
 }
