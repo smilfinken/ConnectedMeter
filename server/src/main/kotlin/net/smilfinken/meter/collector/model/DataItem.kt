@@ -19,6 +19,6 @@ data class DataItem(private val data: String) {
     }
 
     override fun toString(): String {
-        return "[%s] %s %s".format(obis, value, unit)
+        return "%s: %s %s".format(Mapper.fromOBIS(obis), value, unit)
     }
 }
