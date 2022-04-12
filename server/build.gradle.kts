@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "net.smilfinken.meter"
-version = "0.0.2-SNAPSHOT"
+version = "0.0.3-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,8 +21,6 @@ repositories {
 
 dependencies {
     // spring boot stuff
-    // implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-    // implementation("org.springframework.boot:spring-boot-starter-data-rest")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")

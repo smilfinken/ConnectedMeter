@@ -29,7 +29,7 @@ class GetStatusController(
 
         dataReportRepository
             .findAllByOrderByTimestampDesc()
-            .takeLast(30)
+            .take(30)
             .forEach { dataReport ->
                 result.append(
                     "\t\t\t<h3>${
