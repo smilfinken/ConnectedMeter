@@ -1,14 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    kotlin("jvm") version "1.6.20"
+    kotlin("plugin.allopen") version "1.6.20"
+    kotlin("plugin.jpa") version "1.6.20"
+    kotlin("plugin.noarg") version "1.6.20"
+    kotlin("plugin.spring") version "1.6.20"
+
     id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.6.20"
-    kotlin("plugin.spring") version "1.6.20"
 }
 
 group = "net.smilfinken.meter"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.2-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -16,14 +20,20 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-data-rest")
+    // spring boot stuff
+    // implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    // implementation("org.springframework.boot:spring-boot-starter-data-rest")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // kotlin things
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.github.snksoft:crc:1.0.1")
+
+    // nice to have
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.github.snksoft:crc:1.0.2")
 
 
     runtimeOnly("com.h2database:h2")

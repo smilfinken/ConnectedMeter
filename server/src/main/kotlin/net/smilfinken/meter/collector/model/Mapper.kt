@@ -1,6 +1,6 @@
 package net.smilfinken.meter.collector.model
 
-class Mapper {
+internal class Mapper {
     companion object {
         internal fun fromOBIS(obis: String): String {
             when (obis) {

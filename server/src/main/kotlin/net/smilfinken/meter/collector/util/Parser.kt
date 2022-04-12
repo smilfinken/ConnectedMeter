@@ -2,7 +2,7 @@ package net.smilfinken.meter.collector.util
 
 import java.sql.Timestamp
 
-class Parser {
+internal class Parser {
     companion object {
         private val IDSTRING_MATCHER = """/([a-zA-Z]{3}\d)[^a-zA-Z0-9]*(\d+.+)""".toRegex()
         private val TIMESTRING_MATCHER = """(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})""".toRegex()

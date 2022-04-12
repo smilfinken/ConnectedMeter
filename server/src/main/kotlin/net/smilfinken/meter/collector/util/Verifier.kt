@@ -5,7 +5,7 @@ import com.github.snksoft.crc.CRC.Parameters
 import net.smilfinken.meter.collector.exceptions.CrcVerificationException
 import org.slf4j.LoggerFactory
 
-class Verifier {
+internal class Verifier {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(Verifier::class.java)!!
 

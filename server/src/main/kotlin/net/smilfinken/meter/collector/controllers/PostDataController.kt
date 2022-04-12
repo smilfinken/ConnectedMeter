@@ -3,7 +3,6 @@ package net.smilfinken.meter.collector.controllers
 import net.smilfinken.meter.collector.exceptions.CrcVerificationException
 import net.smilfinken.meter.collector.model.DataItem
 import net.smilfinken.meter.collector.model.DataReport
-import net.smilfinken.meter.collector.persistance.CurrentStatus
 import net.smilfinken.meter.collector.util.Parser.Companion.parseDateString
 import net.smilfinken.meter.collector.util.Parser.Companion.parseIdString
 import net.smilfinken.meter.collector.util.Verifier.Companion.verifyData
@@ -13,14 +12,21 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+import javax.transaction.Transactional
 
 @Controller
+@Transactional
 @RequestMapping("/meter/collector")
 class PostDataController {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(PostDataController::class.java)!!
         private val DATAITEM_PATTERN = """\d+-\d+:\d+\.\d+\.\d+\(.+\)""".toRegex()
     }
+
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
 
     @PostMapping("/submit")
     fun submit(@RequestBody data: String): ResponseEntity<String> {
@@ -37,17 +43,21 @@ class PostDataController {
                 .toMutableList()
             val id = parseIdString(lines.removeAt(0))
 
-            val dataReport = DataReport(parseDateString(lines.removeAt(0)))
+            var itemCount = 0
+            val dataReport = DataReport(0, parseDateString(lines.removeAt(0)))
+            entityManager.persist(dataReport)
             lines
                 .filter { it.matches(DATAITEM_PATTERN) }
-                .map { DataItem(it) }
-                .forEach { dataReport.addItem(it) }
-            CurrentStatus.setCurrentStatus(dataReport)
+                .map { DataItem.parseData(it, dataReport) }
+                .forEach {
+                    itemCount++
+                    entityManager.persist(it)
+                }
 
             val message = "" +
-                    "stored ${dataReport.getCount()} data items" +
+                    "stored $itemCount data items" +
                     " for ID $id" +
-                    " recorded at ${dataReport.getTimestamp()}"
+                    " recorded at ${dataReport.timestamp}"
             LOGGER.info(message)
 
             return ResponseEntity.ok(id)
