@@ -26,6 +26,13 @@ internal class GetStatusControllerTest(
 ) {
     @BeforeEach
     fun setUp() {
+        val dataReport = DataReport(0, Timestamp.valueOf(LocalDateTime.now()))
+        dataReportRepository.save(dataReport)
+
+        listOf("1-0:1.7.0", "1-0:2.7.0").forEach {
+            val dataItem = DataItem(0, dataReport, it, 4.2F, "Borks")
+            dataItemRepository.save(dataItem)
+        }
     }
 
     @AfterEach
@@ -35,21 +42,11 @@ internal class GetStatusControllerTest(
     }
 
     @Test
-    fun currentStatus() {
-        // given
-        val dataReport = DataReport(0, Timestamp.valueOf(LocalDateTime.now()))
-        dataReportRepository.save(dataReport)
-
-        listOf("1-0:1.7.0", "1-0:2.7.0").forEach {
-            val dataItem = DataItem(0, dataReport, it, 4.2F, "Borks")
-            dataItemRepository.save(dataItem)
-        }
-
+    fun currentStatusReturnsHttpOk() {
         // when
         val entity = restTemplate.getForEntity("/meter/status", String::class.java)
 
         // then
         Assertions.assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
-        println(entity.body)
     }
 }

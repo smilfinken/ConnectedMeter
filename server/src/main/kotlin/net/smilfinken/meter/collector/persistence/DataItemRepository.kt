@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface DataItemRepository : CrudRepository<DataItem, Long> {
     fun findByReport(report: DataReport): List<DataItem>
+    fun findByReportAndObis(dataReport: DataReport, obis: String): DataItem
 }

@@ -15,19 +15,19 @@ import javax.transaction.Transactional
 
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-internal class PostDataControllerTest(@Autowired val restTemplate: TestRestTemplate) {
-    @Autowired
-    private lateinit var dataReportRepository: DataReportRepository
-
-    @Autowired
-    private lateinit var dataItemRepository: DataItemRepository
-
+internal class PostDataControllerTest(
+    @Autowired private val restTemplate: TestRestTemplate,
+    @Autowired private val dataReportRepository: DataReportRepository,
+    @Autowired private val dataItemRepository: DataItemRepository
+) {
     @BeforeEach
     fun setUp() {
     }
 
     @AfterEach
     fun tearDown() {
+        dataItemRepository.deleteAll()
+        dataReportRepository.deleteAll()
     }
 
     @Test

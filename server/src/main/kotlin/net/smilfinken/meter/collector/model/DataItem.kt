@@ -33,7 +33,5 @@ class DataItem(
         }
     }
 
-    override fun toString(): String {
-        return "%s: %s %s".format(Mapper.fromOBIS(obis), value, unit)
-    }
+    override fun toString(): String = "${Mapper.fromOBIS(obis)}: $value $unit"
 }

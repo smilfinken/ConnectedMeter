@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "net.smilfinken.meter"
-version = "0.0.3-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -22,8 +22,8 @@ repositories {
 dependencies {
     // spring boot stuff
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
 
     // kotlin things
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -36,7 +36,8 @@ dependencies {
 
     runtimeOnly("com.h2database:h2")
 
-    implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    // testing tools
+    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
