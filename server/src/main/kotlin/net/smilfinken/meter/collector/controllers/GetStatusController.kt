@@ -28,8 +28,8 @@ class GetStatusController(
         val result = StringBuilder("<html>\n\t<head><title>energy stats</title></head>\n\t<body>\n")
 
         dataReportRepository
-            .findAllByOrderByTimestampDesc()
-            .take(30)
+            .findAllByOrderByTimestampAsc()
+            .takeLast(30)
             .forEach { dataReport ->
                 result.append(
                     "\t\t\t<h3>${

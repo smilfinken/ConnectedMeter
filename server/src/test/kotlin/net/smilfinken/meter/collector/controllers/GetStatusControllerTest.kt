@@ -26,7 +26,7 @@ internal class GetStatusControllerTest(
 ) {
     @BeforeEach
     fun setUp() {
-        val dataReport = DataReport(0, Timestamp.valueOf(LocalDateTime.now()))
+        val dataReport = DataReport(0, Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()))
         dataReportRepository.save(dataReport)
 
         listOf("1-0:1.7.0", "1-0:2.7.0").forEach {

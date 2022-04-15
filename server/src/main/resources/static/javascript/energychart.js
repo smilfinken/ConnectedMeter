@@ -6,12 +6,14 @@ async function loadData() {
 
 function pushData(data) {
   var timestamps = []
+  var usageData = []
   var productionData = []
-  var consumptionData = []
+  var balanceData = []
   data.forEach(item => {
-    timestamps.push(new Date(item.timestamp).toISOString().substr(11,8))
+    timestamps.push(new Date(item.timestamp).toTimeString().substr(0,8))
+    usageData.push(item.usage)
     productionData.push(item.production)
-    consumptionData.push(item.consumption)
+    balanceData.push(item.balance)
   })
   new Chart(document.getElementById("energy-data-chart"), {
     type: 'line',
@@ -19,21 +21,28 @@ function pushData(data) {
       labels: timestamps,
       datasets: [
         {
-          label: "Production",
-          backgroundColor: "green",
+          label: "Total energy usage",
+          backgroundColor: "blue",
+          data: usageData
+        },
+        {
+          label: "Solar power production",
+          backgroundColor: "orange",
           data: productionData
         },
         {
-          label: "Consumption",
+          label: "In/out balance",
           backgroundColor: "red",
-          data: consumptionData
+          data: balanceData
         }
       ]
     },
     options: {
-      responsive: false,
+      title: { display: true, text: "Energy data" },
+      scales: { x: { display: false } },
       legend: { display: true },
-      title: { display: true, text: "Energy data" }
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }

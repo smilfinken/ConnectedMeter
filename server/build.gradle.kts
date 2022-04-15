@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "net.smilfinken.meter"
-version = "0.1.0-SNAPSHOT"
+version = "0.2.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -32,8 +32,9 @@ dependencies {
     // nice to have
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.github.snksoft:crc:1.0.2")
+    implementation("com.google.code.gson:gson:2.9.0")
 
-
+    // runtime in-memory database
     runtimeOnly("com.h2database:h2")
 
     // testing tools

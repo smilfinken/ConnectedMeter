@@ -11,7 +11,8 @@ import javax.persistence.Id
 @Entity
 class DataReport(
     @Id @GeneratedValue(strategy = IDENTITY) val id: Long,
-    @Column(nullable = false, updatable = false) val timestamp: Timestamp
+    @Column(nullable = false, updatable = false) val timestamp: Timestamp,
+    @Column(nullable = false, updatable = false) val receivedTimestamp: Timestamp
 ) {
-    constructor() : this(0, Timestamp.valueOf(LocalDateTime.now()))
+    constructor() : this(0, Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()))
 }

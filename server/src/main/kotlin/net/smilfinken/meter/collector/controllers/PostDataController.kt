@@ -1,17 +1,22 @@
 package net.smilfinken.meter.collector.controllers
 
+import net.smilfinken.meter.collector.api.FroniusClient
 import net.smilfinken.meter.collector.exceptions.CrcVerificationException
 import net.smilfinken.meter.collector.model.DataItem
 import net.smilfinken.meter.collector.model.DataReport
+import net.smilfinken.meter.collector.model.PowerOutput
 import net.smilfinken.meter.collector.util.Parser.Companion.parseDateString
 import net.smilfinken.meter.collector.util.Parser.Companion.parseIdString
 import net.smilfinken.meter.collector.util.Verifier.Companion.verifyData
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import java.sql.Timestamp
+import java.time.LocalDateTime
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 import javax.transaction.Transactional
@@ -27,6 +32,9 @@ class PostDataController {
 
     @PersistenceContext
     private lateinit var entityManager: EntityManager
+
+    @Autowired
+    private lateinit var froniusClient: FroniusClient
 
     @PostMapping("/submit")
     fun submit(@RequestBody data: String): ResponseEntity<String> {
@@ -44,7 +52,7 @@ class PostDataController {
             val id = parseIdString(lines.removeAt(0))
 
             var itemCount = 0
-            val dataReport = DataReport(0, parseDateString(lines.removeAt(0)))
+            val dataReport = DataReport(0, parseDateString(lines.removeAt(0)), Timestamp.valueOf(LocalDateTime.now()))
             entityManager.persist(dataReport)
             lines
                 .filter { it.matches(DATAITEM_PATTERN) }
@@ -53,6 +61,8 @@ class PostDataController {
                     itemCount++
                     entityManager.persist(it)
                 }
+
+            entityManager.persist(PowerOutput(0, dataReport, froniusClient.GetCurrentPAC()))
 
             val message = "" +
                     "stored $itemCount data items" +

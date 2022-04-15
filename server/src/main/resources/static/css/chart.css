@@ -1,0 +1,10 @@
+.panel {
+  display: flex;
+}
+
+.chart-container {
+  position: relative;
+  flex-grow: 1;
+  min-height: 300px;
+  max-height: 600px;
+}
