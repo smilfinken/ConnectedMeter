@@ -17,7 +17,7 @@ function processProductionData(data) {
 
 function processBalanceData(index, data) {
   var element = document.getElementById('balance-' + index + '-daysago')
-  var value = Math.floor(data[1].value - data[0].value)
-  element.appendChild(document.createTextNode(value + " Wh"))
-  element.style.color = value < 0 ? 'orangered' : 'green'
+  var balance = Math.floor(data[1].sum - data[0].sum)
+  element.appendChild(document.createTextNode(balance + " Wh"))
+  element.style.color = balance < 0 ? 'orangered' : 'green'
 }

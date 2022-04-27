@@ -3,6 +3,7 @@ package net.smilfinken.meter.collector.controllers
 import net.smilfinken.meter.collector.api.FroniusClient
 import net.smilfinken.meter.collector.model.EnergyChartDataItem
 import net.smilfinken.meter.collector.model.EnergySum
+import net.smilfinken.meter.collector.model.Mapper
 import net.smilfinken.meter.collector.model.ProductionSum
 import net.smilfinken.meter.collector.persistence.DataReportRepository
 import net.smilfinken.meter.collector.persistence.HourlyDataRepository
@@ -69,16 +70,27 @@ class ApiController(
     fun sum(@PathVariable(required = false) daysAgo: Int? = null): List<EnergySum> {
         LOGGER.trace("=> dailyBalance($daysAgo)")
 
-        return if (daysAgo == 0 || daysAgo == null) {
-            dataReportRepository.sumEnergyBalanceByDate(firstHourOfDay(), nowDate())
-        } else {
-            val now = nowDate()
-            val startTimestamp = firstHourOfDay(Date.from(now.toInstant().minus(daysAgo.toLong() + 1, DAYS)))
-            val endTimestamp = firstHourOfDay(Date.from(now.toInstant().minus(daysAgo.toLong(), DAYS)))
-            val result = dataReportRepository.sumEnergyBalanceByDate(startTimestamp, endTimestamp)
-            LOGGER.trace("got ${result.joinToString { "${it.obis}: ${it.value}, " }} as result for the interval $startTimestamp -- $endTimestamp")
-            result
-        }
+        val now = nowDate()
+        val timeStamps: Pair<Date, Date> =
+            if (daysAgo == 0 || daysAgo == null) {
+                Pair(firstHourOfDay(), now)
+            } else {
+                Pair(
+                    firstHourOfDay(Date.from(now.toInstant().minus(daysAgo.toLong() + 1, DAYS))),
+                    firstHourOfDay(Date.from(now.toInstant().minus(daysAgo.toLong(), DAYS)))
+                )
+            }
+        val result = dataReportRepository.sumEnergyBalanceByDate(timeStamps.first, timeStamps.second)
+        LOGGER.trace(
+            result.joinToString(
+                separator = ", ",
+                transform = {
+                    val interval = "${it.fromTimestamp.toInstant()} -- ${it.toTimestamp.toInstant()}"
+                    "total for $interval: ${Mapper.fromOBIS(it.obis)} = ${it.sum} Wh"
+                }
+            )
+        )
+        return result
     }
 
     @GetMapping(path = ["dailyProduction", "/dailyProduction/{daysAgo}"])
