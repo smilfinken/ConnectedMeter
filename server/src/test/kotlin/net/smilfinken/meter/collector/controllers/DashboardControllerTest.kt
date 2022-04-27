@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.OK
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-internal class ChartControllerTest(@Autowired private val restTemplate: TestRestTemplate) {
+internal class DashboardControllerTest(@Autowired private val restTemplate: TestRestTemplate) {
     @BeforeEach
     fun setUp() {
     }
@@ -21,11 +21,11 @@ internal class ChartControllerTest(@Autowired private val restTemplate: TestRest
     }
 
     @Test
-    fun chartWebPageReturnsHttpOk() {
+    fun dashboardReturnsHttpOk() {
         // when
-        val entity = restTemplate.getForEntity("/meter/chart", String::class.java)
+        val entity = restTemplate.getForEntity("/meter/dashboard", String::class.java)
 
         // then
-        assertEquals(entity.statusCode, HttpStatus.OK)
+        assertEquals(OK, entity.statusCode)
     }
 }

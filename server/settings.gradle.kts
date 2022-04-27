@@ -1,1 +1,1 @@
-rootProject.name = "collector"
+rootProject.name = "Connected Meter"

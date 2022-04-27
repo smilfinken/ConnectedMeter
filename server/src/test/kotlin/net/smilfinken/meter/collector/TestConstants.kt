@@ -3,7 +3,7 @@ package net.smilfinken.meter.collector
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
-class Constants {
+class TestConstants {
     companion object {
         internal val VALID_DATE: Timestamp = Timestamp.valueOf("2021-02-17 18:40:19.0")
         internal const val VALID_ID = "253833635_A"

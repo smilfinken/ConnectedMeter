@@ -1,6 +1,6 @@
 package net.smilfinken.meter.collector.controllers
 
-import net.smilfinken.meter.collector.Constants.Companion.TEST_MESSAGE
+import net.smilfinken.meter.collector.TestConstants.Companion.TEST_MESSAGE
 import net.smilfinken.meter.collector.persistence.DataItemRepository
 import net.smilfinken.meter.collector.persistence.DataReportRepository
 import org.junit.jupiter.api.AfterEach
@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus.OK
 import javax.transaction.Transactional
+
 
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

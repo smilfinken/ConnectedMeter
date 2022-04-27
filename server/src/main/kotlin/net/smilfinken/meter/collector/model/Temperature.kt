@@ -8,10 +8,11 @@ import javax.persistence.Id
 import javax.persistence.OneToOne
 
 @Entity
-class PowerOutput(
+class Temperature(
     @Id @GeneratedValue(strategy = IDENTITY) val id: Long,
     @OneToOne val report: DataReport,
-    @Column(nullable = false, updatable = false) val output: Float
+    @Column(nullable = false, updatable = false) val value: Float,
+    @Column(nullable = false, updatable = false) val source: String
 ) {
-    constructor() : this(0, DataReport(), 0F)
+    constructor() : this(0, DataReport(), 0F, "")
 }

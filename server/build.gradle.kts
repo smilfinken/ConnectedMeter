@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "net.smilfinken.meter"
-version = "0.2.1-SNAPSHOT"
+version = "0.7.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -33,13 +33,21 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.github.snksoft:crc:1.0.2")
     implementation("com.google.code.gson:gson:2.9.0")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+
+    // production database
+    runtimeOnly("org.postgresql:postgresql:42.3.3")
 
     // runtime in-memory database
     runtimeOnly("com.h2database:h2")
 
+    // compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
     // testing tools
-    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 
 tasks.withType<KotlinCompile> {

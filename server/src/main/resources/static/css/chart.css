@@ -1,10 +1,54 @@
-.panel {
-  display: flex;
-}
-
 .chart-container {
   position: relative;
   flex-grow: 1;
-  min-height: 300px;
+  min-height: 400px;
   max-height: 600px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.daily-stats-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 2em;
+}
+
+.daily-stats-item-container {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.daily-stats-item {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.daily-stats-heading {
+  align-self: end;
+}
+
+.daily-stats-label {
+  align-self: left;
+  padding-top: 0.5em;
+}
+
+.daily-stats-value {
+  align-self: end;
+  padding-top: 0.5em;
+  color: orange;
+  font-weight: bold;
+}
+
+.program-info {
+  position: absolute;
+  right: 0.5em;
+  bottom: 0.5em;
+  font-size: xx-small;
 }

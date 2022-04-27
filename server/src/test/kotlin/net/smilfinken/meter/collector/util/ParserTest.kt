@@ -1,9 +1,9 @@
 package net.smilfinken.meter.collector.util
 
-import net.smilfinken.meter.collector.Constants.Companion.TEST_MESSAGE
-import net.smilfinken.meter.collector.Constants.Companion.VALID_CRC
-import net.smilfinken.meter.collector.Constants.Companion.VALID_DATE
-import net.smilfinken.meter.collector.Constants.Companion.VALID_ID
+import net.smilfinken.meter.collector.TestConstants.Companion.TEST_MESSAGE
+import net.smilfinken.meter.collector.TestConstants.Companion.VALID_CRC
+import net.smilfinken.meter.collector.TestConstants.Companion.VALID_DATE
+import net.smilfinken.meter.collector.TestConstants.Companion.VALID_ID
 import net.smilfinken.meter.collector.util.Parser.Companion.parseCrcString
 import net.smilfinken.meter.collector.util.Parser.Companion.parseDateString
 import net.smilfinken.meter.collector.util.Parser.Companion.parseIdString

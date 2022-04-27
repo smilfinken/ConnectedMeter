@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://lion.smilfinken.net:5432/meter
+    username: meter
+    password: connected
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  jpa:
+    hibernate.dialect: PostgreSQLDialect
+    show-sql: false
+    properties.javax.persistence.schema-generation.scripts:
+      action: drop-and-create
+      create-source: metadata
+      create-target: db-schema-create.sql
+      drop-source: metadata
+      drop-target: db-schema-drop.sql
+
+application:
+  schedule.cron: '-'
+
+logging:
+  level:
+    root: INFO
+    net.smilfinken: INFO
+    net.smilfinken.meter.collector: TRACE

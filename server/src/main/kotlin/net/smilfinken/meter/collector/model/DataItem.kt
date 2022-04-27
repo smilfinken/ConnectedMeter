@@ -8,7 +8,7 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.ManyToOne
 
-@Entity
+@Entity(name = "dataItem")
 class DataItem(
     @Id @GeneratedValue(strategy = IDENTITY) val id: Long,
     @ManyToOne val report: DataReport,

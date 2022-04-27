@@ -1,13 +1,12 @@
 logging:
   level:
-    root: INFO
-    net.smilfinken: INFO
+    net.smilfinken.meter.collector: TRACE
 
 application:
   info:
-    name: ${name:Connected Meter}
-    version: ${version:0.0.0}
-  schedule.cron: 1 0 * * * *
+    name: test
+    version: test
+  schedule.cron: '-'
   format:
     datePattern: YYYY-MM-dd
     timePattern: HH:mm:ss

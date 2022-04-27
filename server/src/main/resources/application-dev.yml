@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/meter
+    username: meter
+    password: connected
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  jpa:
+    hibernate.dialect: PostgreSQLDialect
+    show-sql: false
+
+logging:
+  level:
+    root: INFO
+    net.smilfinken: INFO
+    net.smilfinken.meter.collector: DEBUG

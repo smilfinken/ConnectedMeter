@@ -10,7 +10,7 @@ internal class Verifier {
         private val LOGGER = LoggerFactory.getLogger(Verifier::class.java)!!
 
         fun verifyData(data: String) {
-            LOGGER.trace("verifyData()")
+            LOGGER.trace("=> verifyData()")
 
             val index = data.indexOf("!")
             val crcData = data.take(index + 1)

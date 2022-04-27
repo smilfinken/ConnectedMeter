@@ -1,0 +1,31 @@
+{{> header}}
+<div class="panel">
+    <div class="chart-container">
+        <canvas id="energy-data-chart"></canvas>
+    </div>
+    <div class="daily-stats-container">
+        <div class="daily-stats-item-container">
+            <div class="daily-stats-item">
+                <div class="daily-stats-label">Daily statistics</div>
+                <div class="daily-stats-label">Solar energy production</div>
+                <div class="daily-stats-label">Energy usage balance</div>
+            </div>
+            <div class="daily-stats-item">
+                <div class="daily-stats-heading">Today (so far)</div>
+                <div class="daily-stats-value" id="production-0-daysago"></div>
+                <div class="daily-stats-value" id="balance-0-daysago"></div>
+            </div>
+            <div class="daily-stats-item">
+                <div class="daily-stats-heading">Yesterday</div>
+                <div class="daily-stats-value" id="production-1-daysago"></div>
+                <div class="daily-stats-value" id="balance-1-daysago"></div>
+            </div>
+            <div class="daily-stats-item">
+                <div class="daily-stats-heading">Day before yesterday</div>
+                <div class="daily-stats-value" id="production-2-daysago"></div>
+                <div class="daily-stats-value" id="balance-2-daysago"></div>
+            </div>
+        </div>
+    </div>
+    <div class="program-info">{{name}} v{{version}}</div>
+{{> footer}}
