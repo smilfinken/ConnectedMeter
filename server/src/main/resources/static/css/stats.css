@@ -1,0 +1,66 @@
+.daily-stats-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 2em;
+}
+
+.daily-stats-item-container {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.daily-stats-item {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.daily-stats-heading {
+  align-self: end;
+}
+
+.daily-stats-label {
+  align-self: left;
+  padding-top: 0.5em;
+}
+
+.daily-stats-value {
+  align-self: end;
+  padding-top: 0.5em;
+  color: orange;
+  font-weight: bold;
+}
+
+.daily-stats-value.win {
+  color: green;
+}
+
+.daily-stats-value.fail {
+  color: orangered;
+}
+
+.daily-stats-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.daily-stats-tooltip .semi-opaque-balloon {
+  visibility: hidden;
+  border-radius: 0.4em;
+  position: absolute;
+  width: 6em;
+  right: 1em;
+  bottom: 1em;
+  z-index: 1;
+  padding: 0.4em;
+  opacity: 60%;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+}
+
+.daily-stats-tooltip:hover .semi-opaque-balloon {
+  visibility: visible;
+}

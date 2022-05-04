@@ -38,7 +38,7 @@ class FroniusClient(
     @Value("\${application.api.inverter.endDateQueryParameter}")
     private val endParameter: String = ""
 
-    @Value("\${application.api.inverter.datePattern}")
+    @Value("\${application.format.datePattern}")
     private val datePattern = ""
 
     internal fun getCurrentPAC(): Float? {
@@ -115,7 +115,7 @@ class FroniusClient(
         val dateTimeFormatter = DateTimeFormatter.ofPattern(datePattern)
         val startString = startDate.format(dateTimeFormatter)
         val endString = endDate.format(dateTimeFormatter)
-        val inverterArchiveDataUrl = "$baseUri/$archivePath&$endParameter=$endString&$startParameter=$startString"
+        val inverterArchiveDataUrl = "$baseUri/$archivePath&$startParameter=$startString&$endParameter=$endString"
         try {
             val apiResponse = URL(inverterArchiveDataUrl).readText().replace("""inverter/1""", "Inverter")
             LOGGER.trace("response from Fronius inverter for $inverterArchiveDataUrl =\n$apiResponse")

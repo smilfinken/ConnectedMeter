@@ -10,21 +10,16 @@
                 <div class="daily-stats-label">Solar energy production</div>
                 <div class="daily-stats-label">Energy usage balance</div>
             </div>
-            <div class="daily-stats-item">
-                <div class="daily-stats-heading">Today (so far)</div>
-                <div class="daily-stats-value" id="production-0-daysago"></div>
-                <div class="daily-stats-value" id="balance-0-daysago"></div>
-            </div>
-            <div class="daily-stats-item">
-                <div class="daily-stats-heading">Yesterday</div>
-                <div class="daily-stats-value" id="production-1-daysago"></div>
-                <div class="daily-stats-value" id="balance-1-daysago"></div>
-            </div>
-            <div class="daily-stats-item">
-                <div class="daily-stats-heading">Day before yesterday</div>
-                <div class="daily-stats-value" id="production-2-daysago"></div>
-                <div class="daily-stats-value" id="balance-2-daysago"></div>
-            </div>
+            {{#dailyStatistics}}
+                <div class="daily-stats-item">
+                    <div class="daily-stats-heading">{{date}}</div>
+                    <div class="daily-stats-value">{{production}}</div>
+                    <div class="daily-stats-value {{result}} daily-stats-tooltip">
+                        {{balance}}
+                        <span class="semi-opaque-balloon">-{{intake}} +{{output}}</span>
+                    </div>
+                </div>
+            {{/dailyStatistics}}
         </div>
     </div>
     <div class="program-info">{{name}} v{{version}}</div>

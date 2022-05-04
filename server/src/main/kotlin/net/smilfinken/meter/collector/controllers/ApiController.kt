@@ -5,7 +5,6 @@ import net.smilfinken.meter.collector.model.EnergyChartDataItem
 import net.smilfinken.meter.collector.model.EnergySum
 import net.smilfinken.meter.collector.model.Mapper
 import net.smilfinken.meter.collector.model.ProductionSum
-import net.smilfinken.meter.collector.persistence.DataReportRepository
 import net.smilfinken.meter.collector.persistence.HourlyDataRepository
 import net.smilfinken.meter.collector.util.Dater.Companion.LOCAL_TIME_ZONE
 import net.smilfinken.meter.collector.util.Dater.Companion.firstHourOfDay
@@ -25,8 +24,8 @@ import java.util.Date
 @RestController
 @RequestMapping("/meter/api")
 class ApiController(
+    @Autowired private val commonFunctions: CommonFunctions,
     @Autowired private val hourlyDataRepository: HourlyDataRepository,
-    @Autowired private val dataReportRepository: DataReportRepository,
     @Autowired private val froniusClient: FroniusClient
 ) {
     companion object {
@@ -67,20 +66,10 @@ class ApiController(
     }
 
     @GetMapping(path = ["/dailyBalance", "/dailyBalance/{daysAgo}"])
-    fun sum(@PathVariable(required = false) daysAgo: Int? = null): List<EnergySum> {
+    fun dailyBalance(@PathVariable(required = false) daysAgo: Int? = null): List<EnergySum> {
         LOGGER.trace("=> dailyBalance($daysAgo)")
 
-        val now = nowDate()
-        val timeStamps: Pair<Date, Date> =
-            if (daysAgo == 0 || daysAgo == null) {
-                Pair(firstHourOfDay(), now)
-            } else {
-                Pair(
-                    firstHourOfDay(Date.from(now.toInstant().minus(daysAgo.toLong() + 1, DAYS))),
-                    firstHourOfDay(Date.from(now.toInstant().minus(daysAgo.toLong(), DAYS)))
-                )
-            }
-        val result = dataReportRepository.sumEnergyBalanceByDate(timeStamps.first, timeStamps.second)
+        val result = commonFunctions.getEnergyBalanceHistory(daysAgo)
         LOGGER.trace(
             result.joinToString(
                 separator = ", ",
