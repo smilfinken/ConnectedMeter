@@ -119,15 +119,6 @@ internal class DataAggregatorTest {
 
         val expectedTimestamp = DateUtils.truncate(reportTimestamp, HOUR)
         val expectedTemperatureValue = 66.6F
-        val expectedHourlyData = HourlyData(
-            0,
-            expectedTimestamp,
-            mockedDataValue,
-            mockedDataValue,
-            mockedPowerValue,
-            expectedTemperatureValue,
-            expectedTemperatureValue
-        )
 
         val mockedDataItem = DataItem(0, newDataReport, "", mockedDataValue, "")
         val mockedPowerOutput = PowerOutput(0, newDataReport, mockedPowerValue)
