@@ -106,10 +106,12 @@ internal class DataAggregatorTest {
     @Test
     fun aggregateHourlyDataWithSingleUnprocessedDataShouldStore() {
         // given
-        val latestHourlyData =
-            HourlyData(0, Date.from(ZonedDateTime.now(LOCAL_TIME_ZONE).minusDays(3).toInstant()), 0F, 0F, 0F, 0F, 0F)
+        val now = ZonedDateTime.now(LOCAL_TIME_ZONE)
 
-        val reportTimestamp = Date.from(ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(1).toInstant())
+        val latestHourlyData =
+            HourlyData(0, Date.from(now.minusDays(3).toInstant()), 0F, 0F, 0F, 0F, 0F)
+
+        val reportTimestamp = Date.from(now.minusHours(1).toInstant())
         val newDataReport = DataReport(0, reportTimestamp, reportTimestamp)
 
         val mockedDataValue = 7F
@@ -159,17 +161,19 @@ internal class DataAggregatorTest {
     @Test
     fun aggregateHourlyDataWithMultipleItemsShouldStoreCorrectAmount() {
         // given
+        val now = ZonedDateTime.now(LOCAL_TIME_ZONE)
+
         val latestHourlyData =
-            HourlyData(0, Date.from(ZonedDateTime.now(LOCAL_TIME_ZONE).minusDays(3).toInstant()), 0F, 0F, 0F, 0F, 0F)
+            HourlyData(0, Date.from(now.minusDays(3).toInstant()), 0F, 0F, 0F, 0F, 0F)
 
         val reportTimestamps = listOf(
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(8),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(3),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(3),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(2),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(2),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(2),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(1),
+            now.minusHours(8),
+            now.minusHours(3),
+            now.minusHours(3),
+            now.minusHours(2),
+            now.minusHours(2),
+            now.minusHours(2),
+            now.minusHours(1),
         )
         val newDataReports = reportTimestamps.map {
             val timestamp = Date.from(it.toInstant())
@@ -200,20 +204,22 @@ internal class DataAggregatorTest {
     @Test
     fun aggregateHourlyDataReturnsCorrectAverages() {
         // given
+        val now = ZonedDateTime.now(LOCAL_TIME_ZONE)
+
         val latestHourlyData =
-            HourlyData(0, Date.from(ZonedDateTime.now(LOCAL_TIME_ZONE).minusDays(3).toInstant()), 0F, 0F, 0F, 0F, 0F)
+            HourlyData(0, Date.from(now.minusDays(3).toInstant()), 0F, 0F, 0F, 0F, 0F)
 
         val reportTimestamps = listOf(
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(8),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(8),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(8),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(8),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(3),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(3),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(3),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(2),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(2),
-            ZonedDateTime.now(LOCAL_TIME_ZONE).minusHours(1),
+            now.minusHours(8),
+            now.minusHours(8),
+            now.minusHours(8),
+            now.minusHours(8),
+            now.minusHours(3),
+            now.minusHours(3),
+            now.minusHours(3),
+            now.minusHours(2),
+            now.minusHours(2),
+            now.minusHours(1),
         )
         val newDataReports = reportTimestamps.map {
             val timestamp = Date.from(it.toInstant())

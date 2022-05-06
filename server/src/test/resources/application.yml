@@ -1,5 +1,6 @@
 logging:
   level:
+    root: ERROR
     net.smilfinken.meter.collector: TRACE
 
 application:
@@ -11,7 +12,8 @@ application:
     datePattern: YYYY-MM-dd
     timePattern: HH:mm:ss
   chart:
-    items: 500
+  dailyStatistics:
+    daysToShow: 7
   keys:
     energy:
       incoming: 1-0:1.7.0
