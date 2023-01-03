@@ -1,6 +1,7 @@
 package net.smilfinken.meter.collector.maintenance
 
 import net.smilfinken.meter.collector.model.HourlyData
+import net.smilfinken.meter.collector.model.PeriodicData
 import net.smilfinken.meter.collector.persistence.DataItemRepository
 import net.smilfinken.meter.collector.persistence.DataReportRepository
 import net.smilfinken.meter.collector.persistence.HourlyDataRepository
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.Calendar.HOUR
 import java.util.Date
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
 
 @Component
 class DataAggregator(
@@ -28,6 +31,8 @@ class DataAggregator(
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(DataAggregator::class.java)!!
+
+        private val lock: Lock = ReentrantLock()
     }
 
     @Value("\${application.keys.energy.incoming}")
@@ -71,7 +76,7 @@ class DataAggregator(
             this.indoorTemperature += indoorTemperature
         }
 
-        fun toHourlyData() = HourlyData(
+        fun toHourlyData() = PeriodicData(
             0,
             timestamp,
             output / count,
@@ -85,48 +90,66 @@ class DataAggregator(
     internal fun aggregateHourlyData() {
         LOGGER.trace("=> aggregateHourlyData()")
 
-        val cutoffTime = firstMinuteOfHour()
-        val lastEntryTime = addHours(hourlyDataRepository.findTopByOrderByTimestampDesc()?.timestamp ?: minDate(), 1)
+        if (lock.tryLock()) {
+            val cutoffTime = firstMinuteOfHour()
+            val lastEntryTime =
+                addHours(hourlyDataRepository.findTopByOrderByTimestampDesc()?.timestamp ?: minDate(), 1)
 
-        val reports = dataReportRepository.findAllByReceivedTimestampBetween(lastEntryTime, cutoffTime)
-        LOGGER.trace("found ${reports.size} entries between $lastEntryTime and $cutoffTime")
-        if (reports.isEmpty()) {
-            return
-        }
-
-        var accumulator = Accumulator(truncate(reports.first().receivedTimestamp, HOUR))
-        reports
-            .forEach { report ->
-                LOGGER.trace("processing report from ${report.receivedTimestamp}")
-
-                if (!isSameHour(report.receivedTimestamp, accumulator.timestamp)) {
-                    if (accumulator.getCount() > 0) {
-                        saveHourlyData(accumulator)
-                    }
-                    accumulator = Accumulator(truncate(report.receivedTimestamp, HOUR))
-                }
-                LOGGER.trace("report id = ${report.id}");
-                accumulator.addItem(
-                    dataItemRepository.findByReportAndObis(report, energyOutgoingKey).value * 1000,
-                    dataItemRepository.findByReportAndObis(report, energyIncomingKey).value * 1000,
-                    powerOutputRepository.findByReport(report).output,
-                    temperatureRepository.findByReportAndSource(report, outdoorTemperatureKey)?.value ?: 0F,
-                    temperatureRepository.findByReportAndSource(report, indoorTemperatureKey)?.value ?: 0F
-                )
+            val reports = dataReportRepository.findAllByReceivedTimestampBetween(lastEntryTime, cutoffTime)
+            LOGGER.trace("found ${reports.size} entries between $lastEntryTime and $cutoffTime")
+            if (reports.isEmpty()) {
+                return
             }
-        saveHourlyData(accumulator)
+
+            var accumulator = Accumulator(truncate(reports.first().receivedTimestamp, HOUR))
+            reports
+                .forEach { report ->
+                    LOGGER.trace("processing report from ${report.receivedTimestamp}")
+
+                    if (!isSameHour(report.receivedTimestamp, accumulator.timestamp)) {
+                        if (accumulator.getCount() > 0) {
+                            saveHourlyData(accumulator)
+                        }
+                        accumulator = Accumulator(truncate(report.receivedTimestamp, HOUR))
+                    }
+                    accumulator.addItem(
+                        dataItemRepository.findByReportAndObis(report, energyOutgoingKey).value * 1000,
+                        dataItemRepository.findByReportAndObis(report, energyIncomingKey).value * 1000,
+                        powerOutputRepository.findByReport(report).output,
+                        temperatureRepository.findByReportAndSource(report, outdoorTemperatureKey)?.value ?: 0F,
+                        temperatureRepository.findByReportAndSource(report, indoorTemperatureKey)?.value ?: 0F
+                    )
+                }
+            saveHourlyData(accumulator)
+
+            lock.unlock()
+        } else {
+            LOGGER.trace("Failed to obtain lock for aggregating hourly data")
+        }
     }
 
     private fun saveHourlyData(accumulator: Accumulator) {
         LOGGER.debug("saving ${accumulator.getCount()} items of data for timestamp ${accumulator.timestamp}")
-        hourlyDataRepository.save(accumulator.toHourlyData())
+        hourlyDataRepository.save(accumulator.toHourlyData() as HourlyData)
     }
 
     fun aggregateDailyData() {
         LOGGER.trace("=> aggregateDailyData()")
+
+        if (lock.tryLock()) {
+            lock.unlock()
+        } else {
+            LOGGER.trace("Failed to obtain lock for aggregating daily data")
+        }
     }
 
     fun aggregateWeeklyData() {
         LOGGER.trace("=> aggregateWeeklyData()")
+
+        if (lock.tryLock()) {
+            lock.unlock()
+        } else {
+            LOGGER.trace("Failed to obtain lock for aggregating weekly data")
+        }
     }
 }

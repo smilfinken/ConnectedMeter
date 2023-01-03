@@ -4,7 +4,7 @@ import java.util.Date
 import javax.persistence.Entity
 
 @Entity
-class HourlyData(
+class MonthlyData(
     id: Long,
     timestamp: Date,
     output: Float,

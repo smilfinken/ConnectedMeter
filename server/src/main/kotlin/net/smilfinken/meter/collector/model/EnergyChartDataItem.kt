@@ -10,15 +10,17 @@ data class EnergyChartDataItem(
     val indoorTemperature: Float,
     val outdoorTemperature: Float
 ) {
+    constructor(timestamp: Date, balance: Double) : this(timestamp, 0F, 0F, balance.toFloat(), 0F, 0F)
+
     companion object {
-        internal fun fromHourlyData(hourlyData: HourlyData): EnergyChartDataItem {
+        internal fun fromPeriodicData(data: PeriodicData): EnergyChartDataItem {
             return EnergyChartDataItem(
-                hourlyData.timestamp,
-                hourlyData.produced + hourlyData.intake - hourlyData.output,
-                hourlyData.produced,
-                hourlyData.output - hourlyData.intake,
-                hourlyData.indoorTemp,
-                hourlyData.outdoorTemp
+                data.timestamp,
+                data.produced + data.intake - data.output,
+                data.produced,
+                data.output - data.intake,
+                data.indoorTemp,
+                data.outdoorTemp
             )
         }
     }

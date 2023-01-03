@@ -12,8 +12,15 @@ application:
     datePattern: YYYY-MM-dd
     timePattern: HH:mm:ss
   chart:
-  dailyStatistics:
-    daysToShow: 7
+    daily:
+      daysToShow: 30
+    hourly:
+      hoursToShow: 24
+    monthly:
+      monthsToShow: 12
+  statistics:
+    daily:
+      daysToShow: 7
   keys:
     energy:
       incoming: 1-0:1.7.0

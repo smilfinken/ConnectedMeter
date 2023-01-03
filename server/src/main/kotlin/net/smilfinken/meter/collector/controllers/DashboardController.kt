@@ -26,7 +26,7 @@ class DashboardController(
         private val LOGGER = LoggerFactory.getLogger(DashboardController::class.java)
     }
 
-    @Value("\${application.dailyStatistics.daysToShow}")
+    @Value("\${application.statistics.daily.daysToShow}")
     private val daysToShow = 7
 
     @Value("\${application.info.name}")
