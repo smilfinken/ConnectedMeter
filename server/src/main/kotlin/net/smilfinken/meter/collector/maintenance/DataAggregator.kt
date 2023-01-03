@@ -105,12 +105,13 @@ class DataAggregator(
                     }
                     accumulator = Accumulator(truncate(report.receivedTimestamp, HOUR))
                 }
+                LOGGER.trace("report id = ${report.id}");
                 accumulator.addItem(
                     dataItemRepository.findByReportAndObis(report, energyOutgoingKey).value * 1000,
                     dataItemRepository.findByReportAndObis(report, energyIncomingKey).value * 1000,
                     powerOutputRepository.findByReport(report).output,
-                    temperatureRepository.findByReportAndSource(report, outdoorTemperatureKey).value,
-                    temperatureRepository.findByReportAndSource(report, indoorTemperatureKey).value
+                    temperatureRepository.findByReportAndSource(report, outdoorTemperatureKey)?.value ?: 0F,
+                    temperatureRepository.findByReportAndSource(report, indoorTemperatureKey)?.value ?: 0F
                 )
             }
         saveHourlyData(accumulator)

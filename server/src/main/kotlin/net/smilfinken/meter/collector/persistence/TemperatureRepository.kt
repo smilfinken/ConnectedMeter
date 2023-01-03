@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface TemperatureRepository : CrudRepository<Temperature, Long> {
     fun findByReport(report: DataReport): List<Temperature>
-    fun findByReportAndSource(report: DataReport, source: String): Temperature
+    fun findByReportAndSource(report: DataReport, source: String): Temperature?
 }
