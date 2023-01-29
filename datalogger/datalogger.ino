@@ -91,6 +91,19 @@ void initWifi() {
   SERIAL_DEBUG.println(WiFi.localIP());
 }
 
+void checkWifi() {
+  SERIAL_DEBUG.print("checking WiFi connection..");
+  if (wifiMulti.run() != WL_CONNECTED) {
+    SERIAL_DEBUG.print(". WiFi disconnected, reconnecting..");
+    while (wifiMulti.run() != WL_CONNECTED) {
+      SERIAL_DEBUG.print(".");     
+    }
+  }
+
+  SERIAL_DEBUG.print(" connected with IP ");
+  SERIAL_DEBUG.println(WiFi.localIP());
+}
+
 void initNTP() {
   SERIAL_DEBUG.print("initializing NTP client..");
 
@@ -227,6 +240,7 @@ void loop()
     updateTime();
   }
 
+  checkWifi();
   readData();
   
   delay(loopResolution);
