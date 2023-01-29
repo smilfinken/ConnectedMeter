@@ -1,11 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.20"
-    kotlin("plugin.allopen") version "1.6.20"
-    kotlin("plugin.jpa") version "1.6.20"
-    kotlin("plugin.noarg") version "1.6.20"
-    kotlin("plugin.spring") version "1.6.20"
+    val kotlinVersion: String by System.getProperties()
+
+    kotlin("jvm").version(kotlinVersion)
+    kotlin("plugin.allopen").version(kotlinVersion)
+    kotlin("plugin.jpa").version(kotlinVersion)
+    kotlin("plugin.noarg").version(kotlinVersion)
+    kotlin("plugin.spring").version(kotlinVersion)
 
     id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
@@ -31,23 +33,23 @@ dependencies {
 
     // nice to have
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.github.snksoft:crc:1.0.2")
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.github.snksoft:crc:1.1.0")
+    implementation("com.google.code.gson:gson:2.10")
     implementation("org.apache.commons:commons-lang3:3.12.0")
 
     // production database
-    runtimeOnly("org.postgresql:postgresql:42.3.3")
+    runtimeOnly("org.postgresql:postgresql:42.5.1")
 
     // runtime in-memory database
     runtimeOnly("com.h2database:h2")
 
     // compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
     // testing tools
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
     testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.ninja-squad:springmockk:3.1.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation("com.ninja-squad:springmockk:4.0.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }
 
 tasks.withType<KotlinCompile> {
