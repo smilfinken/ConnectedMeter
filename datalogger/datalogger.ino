@@ -1,4 +1,4 @@
-#include <Arduino.h>
+  #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
 #include <NTP.h>
 #include <WString.h>
@@ -89,6 +89,17 @@ void initWifi() {
 
   SERIAL_DEBUG.print(" connected with IP ");
   SERIAL_DEBUG.println(WiFi.localIP());
+}
+
+void checkWifi() {
+  if (wifiMulti.run() != WL_CONNECTED) {
+    SERIAL_DEBUG.print("WiFi disconnected, reconnecting..");
+    while (wifiMulti.run() != WL_CONNECTED) {
+      SERIAL_DEBUG.print(".");     
+    }
+    SERIAL_DEBUG.print(" connected with IP ");
+    SERIAL_DEBUG.println(WiFi.localIP());
+  }
 }
 
 void initNTP() {
@@ -227,6 +238,7 @@ void loop()
     updateTime();
   }
 
+  checkWifi();
   readData();
   
   delay(loopResolution);
