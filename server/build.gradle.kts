@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "net.smilfinken.meter"
-version = "0.8.3"
+version = "0.8.4"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
