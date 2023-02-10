@@ -13,7 +13,7 @@ class FibaroClient {
 
         private const val HOME_CENTER_API_BASE_URL = "http://fibaro.smilfinken.net/api"
         private const val HOME_CENTER_INDOOR_TEMPERATURE_URL =
-            "$HOME_CENTER_API_BASE_URL/temperature/now/now/summary-graph/devices/temperature/294"
+            "$HOME_CENTER_API_BASE_URL/temperature/now/now/summary-graph/devices/temperature/296"
         private const val HOME_CENTER_OUTDOOR_TEMPERATURE_URL =
             "$HOME_CENTER_API_BASE_URL/temperature/now/now/summary-graph/devices/temperature/248"
     }
